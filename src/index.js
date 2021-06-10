@@ -4,24 +4,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { DB_URI, DB_NAME } = process.env;
-
-// process.env.DB_URI
-
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
-
-const books = [
-  {
-    title: 'The Awakening lalala',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -29,23 +14,44 @@ const typeDefs = gql`
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
+  
+  type Query{
+    myTaskLists: [TaskList!]
   }
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+  
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    avatar: String
   }
+  type TaskList {
+    id: ID!
+    createdAt: String!
+    title: String!
+    progress: Float!
 
+    users: [User!]!
+    todos: [ToDo!]! 
+  }
+  type ToDo {
+    id: ID!
+    content: String!
+    isCompleted: Boolean!
 
+    taskListId: TaskList!
+
+  }
 `;
 
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
+  Query: {
+    myTaskLists: () => []
+  }
 };
+
 const start = async () => {
   const client = new MongoClient(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
   await client.connect();
