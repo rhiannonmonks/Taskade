@@ -13,7 +13,7 @@ const { DB_URI, DB_NAME } = process.env;
 
 const books = [
   {
-    title: 'The Awakening',
+    title: 'The Awakening lalala',
     author: 'Kate Chopin',
   },
   {
