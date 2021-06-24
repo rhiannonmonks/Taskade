@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 dotenv.config();
 
+
 const { DB_URI, DB_NAME, JWT_SECRET } = process.env;
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -32,6 +33,7 @@ const typeDefs = gql`
   
   type Query{
     myTaskLists: [TaskList!]
+    getTaskList(id: ID!): TaskList
   }
 
   type Mutation {
@@ -39,6 +41,8 @@ const typeDefs = gql`
     signIn(input: SignInInput!): AuthUser!
 
     createTaskList(title: String!): TaskList!
+    updateTaskList(id: ID!, title: String!): TaskList!
+    deleteTaskList(id: ID!): Boolean!
   }
 
   input SignUpInput {
@@ -94,7 +98,15 @@ const resolvers = {
       return await db.collection('TaskList')
       .find({ userIds: user._id })
       .toArray(); 
+    },
+    
+    getTaskList: async(_, { id }, { db, user }) => {
+      if(!user) { throw new Error('Authentication Error. Please sign in'); }
+    
+      return await db.collection('TaskList').findOne({ _id: ObjectID(id )});
+      
     }
+
   },
   
   Mutation: {
@@ -137,6 +149,27 @@ const resolvers = {
       }
       const result = await db.collection('TaskList').insert(newTaskList);
       return result.ops[0];
+    },
+    updateTaskList: async(_, { id, title }, {db, user}) => {
+      if(!user) { throw new Error('Authentication Error. Please sign in'); }
+      
+      const result = await db.collection('TaskList')
+      .updateOne({_id: ObjectID(id)}, {
+        $set: {
+          title
+        }
+      }) 
+
+      return await db.collection('TaskList').findOne({ _id: ObjectID(id) });
+    },
+
+    deleteTaskList: async(_, { id }, { db, user }) => {
+      if(!user) { throw new Error('Authentication Error. Please sign in'); }
+    
+      //TODO only collabs of this task list should be able to delete
+      await db.collection('TaskList').removeOne({ _id: ObjectID(id )});
+      
+      return true;
     }
   },
 
