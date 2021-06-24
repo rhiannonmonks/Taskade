@@ -44,6 +44,8 @@ const typeDefs = gql`
     updateTaskList(id: ID!, title: String!): TaskList!
     deleteTaskList(id: ID!): Boolean!
     addUserToTaskList(taskListId: ID!, userId: ID!): TaskList
+
+    createToDo(content: String!, taskListId: ID!): ToDo!
   }
 
   input SignUpInput {
@@ -83,9 +85,7 @@ const typeDefs = gql`
     id: ID!
     content: String!
     isCompleted: Boolean!
-
-    taskListId: TaskList!
-
+    taskList: TaskList!
   }
 `;
 
@@ -191,7 +191,19 @@ const resolvers = {
       await db.collection('TaskList').removeOne({ _id: ObjectID(id )});
       
       return true;
-    }
+    },
+
+    // ToDo Items
+    createToDo: async(_, { content, taskListId }, { db, user }) => {
+      if (!user) { throw new Error('Authentication Error. Please sign in'); }
+      const newToDo = {
+        content, 
+        taskListId: ObjectID(taskListId),
+        isCompleted: false,
+      }
+      const result = await db.collection('ToDo').insert(newToDo);
+      return result.ops[0];
+    },
   },
 
   User: {
@@ -206,8 +218,16 @@ const resolvers = {
       db.collection('Users').findOne({ _id: userId }))
       )
     )
-  }
+  },
+
+  ToDo: {
+    id: ({_id, id}) =>_id|| id,
+    taskList: async ({ taskListId }, _, { db }) => (
+      await db.collection('TaskList').findOne({ _id: ObjectID(taskListId) })
+    )
+  },
 };
+
 
 const start = async () => {
   const client = new MongoClient(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
