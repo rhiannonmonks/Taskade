@@ -29,6 +29,13 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
     input?.current?.focus();
     }
   }, [input])
+
+  const onKeyPress = ({ nativeEvent }) => {
+    if (nativeEvent.key === 'Backspace' && content === '') {
+      // Delete item
+      console.warn('Delete item');
+    }
+  }
   
   return (
    
@@ -50,6 +57,7 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
         multiline 
         onSubmitEditing={onSubmit}
         blurOnSubmit
+        onKeyPress={onKeyPress}
         />
       </View>
   )

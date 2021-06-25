@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, TextInput } from 'react-native';
 import ToDoItem from '../components/ToDoItem';
 
 import { Text, View } from '../components/Themed';
@@ -8,6 +8,7 @@ let id = '4';
 
 export default function TabOneScreen() {
 
+  const [title, setTitle] = useState('');
   const [ todos, setTodos ] = useState([{
     id: '1',
     content: 'Buy milk',
@@ -34,7 +35,11 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One two three</Text>
+      <TextInput 
+        value={title}
+        onChangeText={setTitle}
+        placeholder={'Title'}
+        style={styles.title} />
       <FlatList 
         data={todos}
         renderItem={({ item, index }) => (
@@ -56,7 +61,10 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   title: {
+    width: '100%',
     fontSize: 20,
+    color: 'white',
     fontWeight: 'bold',
+    marginBottom: 12,
   }, 
 });
