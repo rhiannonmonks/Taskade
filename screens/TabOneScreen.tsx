@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, FlatList, TextInput } from 'react-native';
+import { 
+  StyleSheet, 
+  FlatList, 
+  TextInput, 
+  KeyboardAvoidingView,
+  Platform } from 'react-native';
 import ToDoItem from '../components/ToDoItem';
 
 import { Text, View } from '../components/Themed';
@@ -34,7 +39,12 @@ export default function TabOneScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
+        style={{ flex: 1}}
+    >
+      <View style={styles.container}>
       <TextInput 
         value={title}
         onChangeText={setTitle}
@@ -51,6 +61,7 @@ export default function TabOneScreen() {
         style={{width: '100%'}}
       />
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
