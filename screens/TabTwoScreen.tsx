@@ -1,24 +1,31 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../components/EditScreenInfo';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-
+import { useState } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import ProjectItem from '../components/ProjectItem';
 import { Text, View } from '../components/Themed';
 
 export default function TabTwoScreen() {
+  const [project, setProjects] = useState([{
+    id: '1',
+    title: 'Project 1',
+    createdAt: '2d',
+  }, {
+    id: '2',
+    title: 'Project 2',
+    createdAt: '2d',
+  }, {
+    id: '3',
+    title: 'Project 3',
+    createdAt: '2d',
+  }]);
+  
   return (
     <View style={styles.container}>
-    
-      <View style={styles.root}>
-        <View style={styles.iconContainer}>
-         <MaterialCommunityIcons name="file-outline" size={24} color="grey" />
-         </View>
-         <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.title}>Title</Text>
-          <Text style={styles.time}>2d</Text>
-         </View>
-    </View>
+    <FlatList
+      data={project}
+      renderItem={({item}) => <ProjectItem project={item} />}
+      style={{ width: '100%' }}
+    />
   </View>
   );  
 }
