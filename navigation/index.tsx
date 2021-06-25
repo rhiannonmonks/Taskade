@@ -13,6 +13,8 @@ import ProjectsScreen from '../screens/ProjectsScreen';
 import ToDoScreen from '../screens/ToDoScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import SplashScreen from '../screens/SplashScreen';
+
 import { RootStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -34,11 +36,19 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen 
-      name="SignIn" 
-      component={SignInScreen}
+      name="Splash" 
+      component={SplashScreen}
       options={{
-        title: "Sign In"
+        headerShown: false
       }}
+      />
+
+      <Stack.Screen 
+        name="SignIn"
+        component={SignInScreen}
+        options={{
+          title: "Sign In"
+        }}
       />
 
       <Stack.Screen 
