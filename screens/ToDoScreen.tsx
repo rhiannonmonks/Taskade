@@ -7,7 +7,7 @@ import {
   Platform,
   Alert,
  } from 'react-native';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import { useRoute } from '@react-navigation/native';
 import ToDoItem from '../components/ToDoItem';
 
@@ -27,6 +27,38 @@ query getTaskList($id:ID!) {
   }
 }`
 
+const CREATE_TODO = gql `
+mutation createToDo($content: String!, $taskListId: ID!) {
+  createToDo(content: $content, taskListId: $taskListId) {
+    id
+    content
+    isCompleted
+    
+    taskList {
+      id
+      progress
+      todos {
+        id
+        content
+        isCompleted
+      }
+    }
+
+  }
+}mutation createToDo($content: String!, $taskListId: ID!) {
+  createToDo(content: $content, taskListId: $taskListId) {
+    id
+    content
+    isCompleted
+    
+    taskList {
+      id
+      progress
+    }
+  }
+}
+`;
+
 let id = '4';
 
 export default function ToDoScreen() {
@@ -35,8 +67,12 @@ export default function ToDoScreen() {
   const [ title, setTitle ] = useState('');
 
   const route = useRoute();
+  const id = route.params.id;
 
-  const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id: route.params.id } })
+  const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id } })
+  const [
+    createToDo, { data: createTodoData, error: createTodoError }
+  ] = useMutation(CREATE_TODO);
 
   useEffect(() => {
     if (error) {
@@ -53,6 +89,12 @@ export default function ToDoScreen() {
   }, [data])
 
   const createNewItem = (atIndex: number) => {
+    createToDo({
+      variables: {
+        content: '',
+        taskListId: id,
+      }
+    })
     // const newTodos = [ ...todos];
     // newTodos.splice(atIndex, 0, {
     //   id: id,
