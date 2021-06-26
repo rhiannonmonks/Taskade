@@ -11,7 +11,7 @@ import { Text, View } from '../components/Themed';
 
 let id = '4';
 
-export default function TabOneScreen() {
+export default function ToDoScreen() {
 
   const [title, setTitle] = useState('');
   const [ todos, setTodos ] = useState([{

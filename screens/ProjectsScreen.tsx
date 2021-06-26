@@ -1,23 +1,37 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, FlatList, Alert } from 'react-native';
 import ProjectItem from '../components/ProjectItem';
-import { Text, View } from '../components/Themed';
+import { View } from '../components/Themed';
+import { useQuery, gql } from '@apollo/client';
 
-export default function TabTwoScreen() {
-  const [project, setProjects] = useState([{
-    id: '1',
-    title: 'Project 1',
-    createdAt: '2d',
-  }, {
-    id: '2',
-    title: 'Project 2',
-    createdAt: '2d',
-  }, {
-    id: '3',
-    title: 'Project 3',
-    createdAt: '2d',
-  }]);
+const MY_PROJECTS = gql`
+query myTaskLists {
+  myTaskLists {
+    id
+    title
+    createdAt
+  }
+}
+`;
+
+export default function ProjectsScreen() {
+  const [project, setProjects] = useState([]);
+
+  const { data, error, loading } = useQuery(MY_PROJECTS);
+  
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Error fetching projects', error.message)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (data) {
+      setProjects(data.myTaskLists);
+    }
+  }, [data])
+
+  const {} = useQuery(MY_PROJECTS)
   
   return (
     <View style={styles.container}>
