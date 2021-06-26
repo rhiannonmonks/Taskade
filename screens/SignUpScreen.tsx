@@ -1,6 +1,27 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+
+import { useMutation, gql } from '@apollo/client';
+
+const SIGN_UP_MUTATION = gql`
+mutation signUp(
+  $email: String!,
+  $password: String!,
+  $name: String!) {
+    signUp(input: {
+      email: $email,
+      password: $password,
+      name: $name
+    }) {
+      token
+      user {
+        id
+				name
+      }
+    }
+  }
+`;
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('')
@@ -9,8 +30,16 @@ const SignUpScreen = () => {
 
   const navigation = useNavigation();
 
+  // mutation[0] : A function to trigger the mutation
+  // mutation[1] : result object
+  // { data, error, loading }
+  const [signUp, { data, error, loading }] = useMutation(SIGN_UP_MUTATION);
+  
+  console.log(data)
+  console.log(error)
+
   const onSubmit = () => {
-    
+    signUp({variables: { name, email, password }})
   }
   
   return (
@@ -60,10 +89,12 @@ const SignUpScreen = () => {
        height: 50,
        borderRadius: 5,
        alignItems: 'center',
+       flexDirection: 'row',
        justifyContent: 'center',
        marginTop: 30,
        }}
        >
+      {loading && <ActivityIndicator /> }
       <Text style={{
         color: 'white',
         fontSize: 18,
@@ -74,6 +105,7 @@ const SignUpScreen = () => {
       </Pressable>
 
       <Pressable 
+       disabled={loading}
        onPress={() => navigation.navigate('SignIn')} 
        style={{ 
        height: 50,
